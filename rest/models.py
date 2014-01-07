@@ -8,78 +8,59 @@ from rest_framework import serializers
 # User model faked to use Cassandra
 POOL = pycassa.ConnectionPool('users', server_list=settings.CASSANDRA_NODES)
 
-class User(CassaModel):
-    table = pycassa.ColumnFamily(POOL, 'user')
+class Session(CassaModel):
+    table = pycassa.ColumnFamily(POOL, 'session')
     
-    user_id = models.TextField(primary_key=True)
-    premium = models.BooleanField()
-    email = models.TextField()
-    username = models.TextField()
-    salt = models.TextField()
-    password = models.TextField()
-    facebook = models.BooleanField()
-    active = models.BooleanField()
-    
+    session_id = models.TextField(primary_key=True)
+    user_id = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True, editable=False)
+    last_modified = models.DateTimeField(auto_now=True)
+
     '''
-        Creates a User object from a map object with the properties.
+        Creates a Session object from a map object with the properties.
     '''
     @staticmethod
     def fromMap(mapRep):
-        return User(**mapRep)
+        return Session(**mapRep)
     
     '''
-        Creates a User object from the tuple return from Cassandra.
+        Creates a Session object from the tuple return from Cassandra.
     '''
     @staticmethod
     def fromCassa(cassRep):
         mapRep = {key : val for key, val in cassRep[1].iteritems()}
-        mapRep['user_id'] = str(cassRep[0])
+        mapRep['session_id'] = str(cassRep[0])
         
-        return User.fromMap(mapRep)
+        return Session.fromMap(mapRep)
     
     '''
-        Method for getting single users from cassandra given the email, username or user_id.
+        Method for getting single sessions from cassandra given the session_id.
     '''
     @staticmethod
-    def get(user_id=None, username=None, email=None):
-        if user_id:
-            return User.getByID(user_id)
-        
-        if username:
-            return User.getByUsername(username)
-        
-        if email:
-            return User.getByEmail(email)
+    def get(access_token=None):
+        if session_id:
+            return Session.getByID(session_id)
         
         return None
     
     '''
-        Gets the user given an ID.
+        Gets the session given an ID.
         
-        @param user_id: The uuid of the user.
+        @param session_id: The uuid of the session.
     '''
     @staticmethod
-    def getByID(user_id):
-        if not isinstance(user_id, uuid.UUID):
-            user_id = uuid.UUID(user_id)
-        return User.fromCassa((str(user_id), User.table.get(user_id)))
-    
+    def getByID(session_id):
+        if not isinstance(session_id, uuid.UUID):
+            session_id = uuid.UUID(session_id)
+        return Session.fromCassa((str(session_id), Session.table.get(session_id)))
+   
     '''
-        Gets the user given a username.
-        
-        @param username: The username of the user.
+
     '''
     @staticmethod
-    def getByUsername(username):
-        expr = pycassa.create_index_expression('username', username)
-        clause = pycassa.create_index_clause([expr], count=1)
-        ans = list(User.table.get_indexed_slices(clause))
+    def filter(user_id=None, last_modified=None, date_created=None)
         
-        if len(ans) == 0:
-            return None
-        
-        return User.fromCassa(ans[0])
-    
+
     '''
         Gets the user by the email.
         
