@@ -66,6 +66,16 @@ class SessionPutForm(forms.Form):
         
         return SessionSerializer(user).data
     
-
+class SessionDeleteForm(forms.Form):
+    session_id = forms.CharField(required=True)
     
-        
+    def clean(self):
+        return self.cleaned_data
+
+    def submit(self):
+        try:
+            session = Session.getByID(self.cleaned_data['session_id'])
+        except CassaNotFoundException:
+            raise SessionNotFoundException()
+
+        session.delete()

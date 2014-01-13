@@ -108,6 +108,10 @@ class Session(CassaModel):
         Session.table.insert(session_id, CassaSessionSerializer(self).data)
         self.session_id = session_id
         
+
+    def delete(self):
+        Session.table.remove(self.session_id)
+        
 '''
     The User serializer used to create a python dictionary for submitting to the
     Cassandra database with the correct options.
