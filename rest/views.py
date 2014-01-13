@@ -1,25 +1,32 @@
+'''
+    This file holds all the views for the sessions api.
+    
+    Created on Jan 13, 2014
+
+    @author: Andrew Oberlin, Jake Gregg
+'''
+
 from django.shortcuts import render
 
 # Create your views here.
 from django.http import HttpResponse
-from rest.serializers import UserSerializer
+from rest.serializers import SessionSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import pycassa
 from django.conf import settings
-from rest.forms import UserGetListForm, UserPostForm, UserPutForm, UserGetSingleForm
+from rest.forms import SessionGetListForm, SessionPostForm, SessionPutForm, SessionGetSingleForm
 from rest.exceptions import BadRequestException, NotImplementedException
 
-class UsersListView(APIView):
+class SessionsListView(APIView):
     '''
-       Used for searching by properties or listing all users available.
-       Also, used to create new users.
+       Used for searching all sessions and creating new sessions
     '''
     
     def get(self, request):
         '''
-            Used to search users by username or email.
+            Used to search for a session
         '''
         # get the offset and limit query parameters
         form = UserGetListForm(request.QUERY_PARAMS)
@@ -41,7 +48,7 @@ class UsersListView(APIView):
         else:
             raise BadRequestException()
         
-class UsersSingleView(APIView):
+class SessionsSingleView(APIView):
     '''
        Used for managing user properties, getting specific users and deleting users.
     '''

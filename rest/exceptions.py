@@ -10,21 +10,21 @@ class BadRequestException(APIException):
 '''
     The user was not correctly authorized.
 '''
-class UserAuthorizationException(APIException):
+class SessionAuthorizationException(APIException):
     status_code = 401
     detail = "Incorrect password user password combination"
     
 '''
     The username or email already exist for the given user.
 '''
-class UserConflictException(APIException):
+class SessionConflictException(APIException):
     status_code = 409
     detail = "The user requested for creation already exists"
     
 '''
     The requested user was not found.
 '''
-class UserNotFoundException(APIException):
+class SessionNotFoundException(APIException):
     status_code = 400
     detail = "The user requested does not exist"
 

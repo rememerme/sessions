@@ -37,7 +37,7 @@ class Session(CassaModel):
         Method for getting single sessions from cassandra given the session_id.
     '''
     @staticmethod
-    def get(access_token=None):
+    def get(session_id=None):
         if session_id:
             return Session.getByID(session_id)
         
@@ -67,15 +67,15 @@ class Session(CassaModel):
         @param email: The email of the user.
     '''
     @staticmethod
-    def getByEmail(email):
-        expr = pycassa.create_index_expression('email', email)
+    def getByUserID(user_id):
+        expr = pycassa.create_index_expression('user_id', user_id)
         clause = pycassa.create_index_clause([expr], count=1)
-        ans = list(User.table.get_indexed_slices(clause))
+        ans = list(Session.table.get_indexed_slices(clause))
         
         if len(ans) == 0:
             return None
         
-        return User.fromCassa(ans[0])
+        return Session.fromCassa(ans[0])
     
     '''
         Gets all of the users and uses an offset and limit if
@@ -104,20 +104,18 @@ class Session(CassaModel):
         @param users: The set of users to save to the user store.  
     '''
     def save(self):
-        user_id = uuid.uuid1() if not self.user_id else uuid.UUID(self.user_id)
-        User.table.insert(user_id, CassaUserSerializer(self).data)
-        self.user_id = user_id
-        
-        
+        session_id = uuid.uuid1() if not self.session_id else uuid.UUID(self.session_id)
+        Session.table.insert(session_id, CassaSessionSerializer(self).data)
+        self.session_id = session_id
         
 '''
     The User serializer used to create a python dictionary for submitting to the
     Cassandra database with the correct options.
 '''
-class CassaUserSerializer(serializers.ModelSerializer):
+class CassaSessionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('username', 'email', 'salt', 'password', 'active', 'facebook', 'premium')
+        model = Session
+        fields = ('session_id', 'user_id', 'date_created', 'last_modified')
 
     
     
