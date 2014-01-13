@@ -12,16 +12,17 @@ import sys
 import site
 
 # Add the site-packages of the chosen virtualenv to work with
-site.addsitedir('/virtualenv/django-cassa-env/local/lib/python2.7/site-packages')
+site.addsitedir('/virtualenv/sessions-api-env/local/lib/python2.7/site-packages')
 
 # Add the projevct onto the syspath
-sys.path.append('/env/sessions')
-sys.path.append('/env/sessions/sessions')
+sys.path.append('/env/sessions/sessions-api')
+sys.path.append('/env/sessions/sessions-model')
+sys.path.append('/env/sessions/users-model')
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sessions.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rememerme.sessions.config.settings")
 
 # Activate teh users-env virtual env
-activate_env=os.path.expanduser("/virtualenv/django-cassa-env/bin/activate_this.py")
+activate_env=os.path.expanduser("/virtualenv/sessions-api-env/bin/activate_this.py")
 execfile(activate_env, dict(__file__=activate_env))
 
 from django.core.wsgi import get_wsgi_application
