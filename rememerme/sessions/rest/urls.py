@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 
-from rest import views
+from rememerme.sessions.rest import views
 
 urlpatterns = patterns('',
     url(r'^$', views.SessionsListView.as_view()),
