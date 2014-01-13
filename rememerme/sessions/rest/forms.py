@@ -38,7 +38,7 @@ class SessionPostForm(forms.Form):
         user = User.getByUsername(self.cleaned_data['username'])
         if not user:
             raise SessionAuthorizationException()
-        self.cleaned_data['user_id'] = user.user_id
+        self.cleaned_data['user_id'] = UUID(user.user_id)
         del self.cleaned_data['username']
         del self.cleaned_data['password']
         session = Session.fromMap(self.cleaned_data)
@@ -51,6 +51,10 @@ class SessionPutForm(forms.Form):
     
     def clean(self):
         self.cleaned_data['last_modified'] = datetime.date.today
+        try:
+            self.cleaned_data['session_id'] = UUID(self.cleaned_data['session_id'])
+        except ValueError:
+            raise SessionNotFoundException()
 
         return self.cleaned_data
     
@@ -70,6 +74,10 @@ class SessionDeleteForm(forms.Form):
     session_id = forms.CharField(required=True)
     
     def clean(self):
+        try:
+            self.cleaned_data['session_id'] = UUID(self.cleaned_data['session_id'])
+        except ValueError:
+            raise SessionNotFoundException()
         return self.cleaned_data
 
     def submit(self):
@@ -79,3 +87,4 @@ class SessionDeleteForm(forms.Form):
             raise SessionNotFoundException()
 
         session.delete()
+        
