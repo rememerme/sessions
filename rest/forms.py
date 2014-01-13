@@ -55,31 +55,12 @@ class SessionPutForm(forms.Form):
         return self.cleaned_data
     
     def submit(self):
-        user_id = self.cleaned_data['user_id']
-        del self.cleaned_data['user_id']
         
-        # get the original user
+        # get the original session
         try:
-            session = Session.get(user_id)
+            session = Session.getByID(self.cleaned_data['session_id'])
         except CassaNotFoundException:
-            raise UserNotFoundException()
-        
-        if not self.cleaned_data: # no real changes made
-            return UserSerializer(user).data
-    
-        # check to see username or email are being changed
-        # if they are maintain the uniqueness
-        if 'username' in self.cleaned_data:
-            if user.username != self.cleaned_data['username'] and User.get(username=self.cleaned_data['username']):
-                raise UserConflictException()
-        
-        if 'email' in self.cleaned_data:
-            if user.email != self.cleaned_data['email'] and User.get(email=self.cleaned_data['email']):
-                raise UserConflictException()
-            
-        if 'password' in self.cleaned_data:
-            self.cleaned_data['password'] = util.hash_password(self.cleaned_data['password'], user.salt)
-        
+            raise SessionNotFoundException()
         session.update(self.cleaned_data)
         session.save()
         
