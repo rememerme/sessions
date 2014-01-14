@@ -12,7 +12,7 @@ from rememerme.users.models import User
 import datetime
 from rememerme.sessions.config import util
 from rememerme.sessions.rest.exceptions import SessionConflictException, SessionNotFoundException, SessionAuthorizationException
-from rememerme.sessions.rest.serializers import SessionSerializer
+from rememerme.sessions.serializers import SessionSerializer
 from uuid import UUID
 from pycassa.cassandra.ttypes import NotFoundException as CassaNotFoundException
 
