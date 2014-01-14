@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     #'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest'
+    'rememerme.sessions.rest'
 )
 
 REST_FRAMEWORK = {
@@ -57,9 +57,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'sessions.urls'
+ROOT_URLCONF = 'config.urls'
 
-WSGI_APPLICATION = 'sessions.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database

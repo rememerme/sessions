@@ -19,7 +19,7 @@ sys.path.append('/env/sessions/sessions-api')
 sys.path.append('/env/sessions/sessions-model')
 sys.path.append('/env/sessions/users-model')
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rememerme.sessions.config.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
 # Activate teh users-env virtual env
 activate_env=os.path.expanduser("/virtualenv/sessions-api-env/bin/activate_this.py")

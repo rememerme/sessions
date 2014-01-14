@@ -10,7 +10,7 @@ from django import forms
 from rememerme.sessions.models import Session
 from rememerme.users.models import User
 import datetime
-from rememerme.sessions.config import util
+from config import util
 from rememerme.sessions.rest.exceptions import SessionConflictException, SessionNotFoundException, SessionAuthorizationException
 from rememerme.sessions.serializers import SessionSerializer
 from uuid import UUID
