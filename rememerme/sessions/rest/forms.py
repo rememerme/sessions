@@ -38,6 +38,8 @@ class SessionPostForm(forms.Form):
         user = User.getByUsername(self.cleaned_data['username'])
         if not user:
             raise SessionAuthorizationException()
+	if not user.authenticate(self.cleaned_data['password']):
+	    raise SessionAuthorizationException()
         self.cleaned_data['user_id'] = UUID(user.user_id)
         del self.cleaned_data['username']
         del self.cleaned_data['password']
