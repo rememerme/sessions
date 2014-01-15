@@ -25,7 +25,7 @@ class SessionPostForm(forms.Form):
         It will only change date_created if the field is empty.
     '''
     def clean(self):
-        now = gm_timestamp()
+        now = datetime.datetime.now()
         self.cleaned_data['date_created'] = now
         self.cleaned_data['last_modified'] = now
 
@@ -52,12 +52,12 @@ class SessionPutForm(forms.Form):
     session_id = forms.CharField(required=True)
     
     def clean(self):
-        self.cleaned_data['last_modified'] = gm_timestamp() 
+        self.cleaned_data['last_modified'] = datetime.datetime.now() #gm_timestamp() 
         try:
-            self.cleaned_data['session_id'] = UUID(self.cleaned_data['session_id'])
+            UUID(self.cleaned_data['session_id'])
         except ValueError:
             raise SessionNotFoundException()
-
+        
         return self.cleaned_data
     
     def submit(self):
