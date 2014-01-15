@@ -70,7 +70,7 @@ class SessionPutForm(forms.Form):
         session.update(self.cleaned_data)
         session.save()
         
-        return SessionSerializer(user).data
+        return SessionSerializer(session).data
     
 class SessionDeleteForm(forms.Form):
     session_id = forms.CharField(required=True)
