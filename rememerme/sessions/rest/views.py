@@ -10,13 +10,13 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.http import HttpResponse
-from rememerme.sessions.rest.serializers import SessionSerializer
+from rememerme.sessions.serializers import SessionSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import pycassa
 from django.conf import settings
-from rememerme.sessions.rest.forms import SessionPostForm, SessionPutForm
+from rememerme.sessions.rest.forms import SessionPostForm, SessionPutForm, SessionDeleteForm
 from rememerme.sessions.rest.exceptions import BadRequestException, NotImplementedException
 
 class SessionsListView(APIView):
@@ -57,4 +57,9 @@ class SessionsSingleView(APIView):
         '''
             Used to delete a user making it inactive.
         '''
-        raise NotImplementedException()
+        form = SessionDeleteForm({'session_id':session_id})
+
+        if form.is_valid():
+            return Response(form.submit())
+        else:
+            raise BadRequestException()

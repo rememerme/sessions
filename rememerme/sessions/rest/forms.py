@@ -10,11 +10,12 @@ from django import forms
 from rememerme.sessions.models import Session
 from rememerme.users.models import User
 import datetime
-from rememerme.sessions.config import util
+from config import util
 from rememerme.sessions.rest.exceptions import SessionConflictException, SessionNotFoundException, SessionAuthorizationException
 from rememerme.sessions.serializers import SessionSerializer
 from uuid import UUID
 from pycassa.cassandra.ttypes import NotFoundException as CassaNotFoundException
+from pycassa.columnfamily import gm_timestamp
 
 class SessionPostForm(forms.Form):
     username = forms.CharField(required=True)
@@ -24,8 +25,9 @@ class SessionPostForm(forms.Form):
         It will only change date_created if the field is empty.
     '''
     def clean(self):
-        self.cleaned_data['date_created'] = datetime.date.today
-        self.cleaned_data['last_modified'] = datetime.date.today
+        now = datetime.datetime.now()
+        self.cleaned_data['date_created'] = now
+        self.cleaned_data['last_modified'] = now
 
         return self.cleaned_data
     
@@ -52,12 +54,12 @@ class SessionPutForm(forms.Form):
     session_id = forms.CharField(required=True)
     
     def clean(self):
-        self.cleaned_data['last_modified'] = datetime.date.today
+        self.cleaned_data['last_modified'] = datetime.datetime.now() #gm_timestamp() 
         try:
-            self.cleaned_data['session_id'] = UUID(self.cleaned_data['session_id'])
+            UUID(self.cleaned_data['session_id'])
         except ValueError:
             raise SessionNotFoundException()
-
+        
         return self.cleaned_data
     
     def submit(self):
@@ -70,14 +72,14 @@ class SessionPutForm(forms.Form):
         session.update(self.cleaned_data)
         session.save()
         
-        return SessionSerializer(user).data
+        return SessionSerializer(session).data
     
 class SessionDeleteForm(forms.Form):
     session_id = forms.CharField(required=True)
     
     def clean(self):
         try:
-            self.cleaned_data['session_id'] = UUID(self.cleaned_data['session_id'])
+            UUID(self.cleaned_data['session_id'])
         except ValueError:
             raise SessionNotFoundException()
         return self.cleaned_data
@@ -89,4 +91,4 @@ class SessionDeleteForm(forms.Form):
             raise SessionNotFoundException()
 
         session.delete()
-        
+        return SessionSerializer(session).data
