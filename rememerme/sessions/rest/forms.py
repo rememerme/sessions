@@ -77,7 +77,7 @@ class SessionDeleteForm(forms.Form):
     
     def clean(self):
         try:
-            self.cleaned_data['session_id'] = UUID(self.cleaned_data['session_id'])
+            UUID(self.cleaned_data['session_id'])
         except ValueError:
             raise SessionNotFoundException()
         return self.cleaned_data
@@ -89,4 +89,4 @@ class SessionDeleteForm(forms.Form):
             raise SessionNotFoundException()
 
         session.delete()
-        
+        return SessionSerializer(session).data

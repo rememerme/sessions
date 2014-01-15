@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import pycassa
 from django.conf import settings
-from rememerme.sessions.rest.forms import SessionPostForm, SessionPutForm
+from rememerme.sessions.rest.forms import SessionPostForm, SessionPutForm, SessionDeleteForm
 from rememerme.sessions.rest.exceptions import BadRequestException, NotImplementedException
 
 class SessionsListView(APIView):
@@ -57,4 +57,9 @@ class SessionsSingleView(APIView):
         '''
             Used to delete a user making it inactive.
         '''
-        raise NotImplementedException()
+        form = SessionDeleteForm({'session_id':session_id})
+
+        if form.is_valid():
+            return Response(form.submit())
+        else:
+            raise BadRequestException()
