@@ -15,6 +15,7 @@ from rememerme.sessions.rest.exceptions import SessionConflictException, Session
 from rememerme.sessions.serializers import SessionSerializer
 from uuid import UUID
 from pycassa.cassandra.ttypes import NotFoundException as CassaNotFoundException
+from pycassa.columnfamily import gm_timestamp
 
 class SessionPostForm(forms.Form):
     username = forms.CharField(required=True)
@@ -24,8 +25,9 @@ class SessionPostForm(forms.Form):
         It will only change date_created if the field is empty.
     '''
     def clean(self):
-        self.cleaned_data['date_created'] = datetime.date.today
-        self.cleaned_data['last_modified'] = datetime.date.today
+        now = gm_timestamp()
+        self.cleaned_data['date_created'] = now
+        self.cleaned_data['last_modified'] = now
 
         return self.cleaned_data
     
@@ -50,7 +52,7 @@ class SessionPutForm(forms.Form):
     session_id = forms.CharField(required=True)
     
     def clean(self):
-        self.cleaned_data['last_modified'] = datetime.date.today
+        self.cleaned_data['last_modified'] = gm_timestamp() 
         try:
             self.cleaned_data['session_id'] = UUID(self.cleaned_data['session_id'])
         except ValueError:
