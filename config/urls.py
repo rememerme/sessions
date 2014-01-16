@@ -1,12 +1,6 @@
 from django.conf.urls import patterns, include, url
 
-#from django.contrib import admin
-#admin.autodiscover()
-
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'NomNomUsers.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
-    url(r'^rest/v1/sessions', include('rememerme.sessions.rest.urls')),
+    url(r'^rest/v1/sessions/docs/', include('rest_framework_swagger.urls')),
+    url(r'^rest/v1/sessions/', include('rememerme.sessions.rest.urls'))
 )
