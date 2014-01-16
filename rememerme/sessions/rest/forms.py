@@ -10,12 +10,10 @@ from django import forms
 from rememerme.sessions.models import Session
 from rememerme.users.models import User
 import datetime
-from config import util
-from rememerme.sessions.rest.exceptions import SessionConflictException, SessionNotFoundException, SessionAuthorizationException
+from rememerme.sessions.rest.exceptions import SessionNotFoundException, SessionAuthorizationException
 from rememerme.sessions.serializers import SessionSerializer
 from uuid import UUID
 from pycassa.cassandra.ttypes import NotFoundException as CassaNotFoundException
-from pycassa.columnfamily import gm_timestamp
 
 class SessionPostForm(forms.Form):
     username = forms.CharField(required=True)
@@ -40,8 +38,10 @@ class SessionPostForm(forms.Form):
         user = User.getByUsername(self.cleaned_data['username'])
         if not user:
             raise SessionAuthorizationException()
-	if not user.authenticate(self.cleaned_data['password']):
-	    raise SessionAuthorizationException()
+        
+        if not user.authenticate(self.cleaned_data['password']):
+            raise SessionAuthorizationException()
+        
         self.cleaned_data['user_id'] = UUID(user.user_id)
         del self.cleaned_data['username']
         del self.cleaned_data['password']

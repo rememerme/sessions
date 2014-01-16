@@ -1,36 +1,29 @@
 from rest_framework.exceptions import APIException
 
-'''
-    Bad Request Exception.
-'''
 class BadRequestException(APIException):
+    '''
+        Bad Request Exception.
+    '''
     status_code = 400
     detail = "A Bad Request was made for the API. Revise input parameters."
 
-'''
-    The user was not correctly authorized.
-'''
 class SessionAuthorizationException(APIException):
+    '''
+        The user was not correctly authorized.
+    '''
     status_code = 401
-    detail = "Incorrect password user password combination"
+    detail = "Incorrect password, username combination."
     
-'''
-    The username or email already exist for the given user.
-'''
-class SessionConflictException(APIException):
-    status_code = 409
-    detail = "The user requested for creation already exists"
-    
-'''
-    The requested user was not found.
-'''
 class SessionNotFoundException(APIException):
+    '''
+        The requested user was not found.
+    '''
     status_code = 400
-    detail = "The user requested does not exist"
+    detail = "The session requested does not exist."
 
-'''
-    The API method was not implemented yet.
-'''
 class NotImplementedException(APIException):
+    '''
+        The API method was not implemented yet.
+    '''
     status_code = 400
-    detail = "This API method has not been implemented"
+    detail = "This API method has not been implemented."
